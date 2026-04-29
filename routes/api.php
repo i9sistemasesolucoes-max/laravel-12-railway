@@ -1,7 +1,11 @@
 <?php
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
 
-Route::post('/nfe/emitir', function (Request $request) {
-    return response()->json(['status' => 'Motor Neuraif Online']);
+Route::post('/nfe/emitir', function () {
+    return response()->json([
+        'status' => 'sucesso',
+        'mensagem' => 'O estagiário acertou o caminho',
+        'motor' => 'Neuraif Online'
+    ]);
 });
