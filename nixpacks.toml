@@ -1,2 +1,5 @@
 [phases.setup]
-nixPkgs = ["...", "php82Packages.composer", "php82Extensions.soap", "php82Extensions.openssl", "php82Extensions.gd", "php82Extensions.dom"]
+nixPkgs = ["...", "php84Extensions.soap", "php84Extensions.xml", "php84Extensions.openssl", "php84Extensions.bcmath"]
+
+[phases.install]
+cmds = ["composer install --optimize-autoloader --no-dev --ignore-platform-reqs"]
