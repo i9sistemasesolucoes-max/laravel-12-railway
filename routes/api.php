@@ -1,5 +1,7 @@
-} catch (\Throwable $e) {
-    // Isso vai retornar o erro detalhado para o seu painel de transmissão
-    return response($e->getMessage() . " em " . $e->getFile() . ":" . $e->getLine(), 500)
-                  ->header('Content-Type', 'text/plain');
-}
+<?php
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::post('/nfe/emitir', function (Request $request) {
+    return response()->json(['status' => 'Motor Neuraif Online']);
+});
