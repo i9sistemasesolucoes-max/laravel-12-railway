@@ -11,9 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Isso remove a barreira de segurança que está causando o erro 500
+        // Isso impede que o Laravel barre o POST da Base44/SellerX
         $middleware->validateCsrfTokens(except: [
-            'api/nfe/*', 
+            'api/*',
+            'api/nfe/*',
+            'api/nfe/emitir'
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
