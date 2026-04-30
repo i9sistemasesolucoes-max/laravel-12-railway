@@ -3,12 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-// Rota raiz para confirmar se o servidor reiniciou
+// Rota para testar se o servidor realmente atualizou
 Route::get('/', function () {
-    return response()->json(['status' => 'online', 'motor' => 'Neuraif Bypass Ativado']);
+    return response()->json([
+        'status' => 'online', 
+        'motor' => 'Neuraif Bypass Ativado',
+        'check' => 'Se voce ve esta mensagem, o código foi trocado com sucesso!'
+    ]);
 });
 
-// MOTOR FISCAL FORÇADO NA WEB
+// Rota que o Base44 vai acessar
 Route::any('/api/nfe/emitir', function (Request $request) {
     try {
         $autoload = base_path('vendor/autoload.php');
@@ -19,7 +23,7 @@ Route::any('/api/nfe/emitir', function (Request $request) {
         if (!class_exists('NFePHP\NFe\Tools')) {
             return response()->json([
                 'status' => 'erro', 
-                'mensagem' => 'A biblioteca sped-nfe nao foi instalada corretamente.'
+                'mensagem' => 'A biblioteca sped-nfe nao foi instalada no servidor.'
             ], 200); 
         }
 
@@ -27,11 +31,10 @@ Route::any('/api/nfe/emitir', function (Request $request) {
         $senhaCertificado = $request->input('senha_certificado');
         $xmlRecebido = $request->input('xml_nota');
 
-        // Se acessar pelo navegador, vai cair aqui
         if (!$certificadoBase64 || !$senhaCertificado || !$xmlRecebido) {
             return response()->json([
                 'status' => 'erro', 
-                'mensagem' => 'O Base44 nao enviou os dados. Teste de rota pelo navegador bem sucedido.'
+                'mensagem' => 'Aguardando dados do Base44. Teste de rota OK!'
             ], 200);
         }
 
@@ -54,10 +57,9 @@ Route::any('/api/nfe/emitir', function (Request $request) {
         return response()->json(['status' => 'sucesso', 'retorno' => $respostaSefaz], 200);
 
     } catch (\Throwable $e) { 
-        // Armadilha para capturar o erro fatal que estava gerando o 500
         return response()->json([
             'status' => 'erro', 
-            'mensagem' => 'ERRO FATAL PHP: ' . $e->getMessage() . ' na linha ' . $e->getLine()
+            'mensagem' => 'ERRO NO PHP: ' . $e->getMessage() . ' na linha ' . $e->getLine()
         ], 200);
     }
 })->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class]);
