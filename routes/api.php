@@ -54,3 +54,4 @@ Route::any('/nfe/emitir', function (Request $request) {
         ], 200);
     }
 });
+
