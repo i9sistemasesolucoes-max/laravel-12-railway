@@ -11,7 +11,6 @@ Route::post('/nfe/emitir', function (Request $request) {
         }
 
         if (!class_exists('NFePHP\NFe\Tools')) {
-            // Alterado para 200 para forçar a leitura no Base44
             return response()->json([
                 'status' => 'erro', 
                 'mensagem' => 'A biblioteca sped-nfe nao foi instalada corretamente.'
@@ -23,10 +22,9 @@ Route::post('/nfe/emitir', function (Request $request) {
         $xmlRecebido = $request->input('xml_nota');
 
         if (!$certificadoBase64 || !$senhaCertificado || !$xmlRecebido) {
-            // Alterado para 200 para forçar a leitura no Base44
             return response()->json([
                 'status' => 'erro', 
-                'mensagem' => 'Variaveis insuficientes. O Base44 nao enviou o XML, a senha ou o Certificado.'
+                'mensagem' => 'O Base44 nao enviou os dados.'
             ], 200);
         }
 
@@ -48,11 +46,11 @@ Route::post('/nfe/emitir', function (Request $request) {
 
         return response()->json(['status' => 'sucesso', 'retorno' => $respostaSefaz], 200);
 
-    } catch (\Exception $e) {
-        // Alterado para 200 para forçar a leitura no Base44
+    // MUDANÇA CRÍTICA AQUI: Usando Throwable para segurar Erros Fatais
+    } catch (\Throwable $e) { 
         return response()->json([
             'status' => 'erro', 
-            'mensagem' => 'Erro interno: ' . $e->getMessage()
+            'mensagem' => 'ERRO FATAL PHP: ' . $e->getMessage() . ' na linha ' . $e->getLine()
         ], 200);
     }
 });
