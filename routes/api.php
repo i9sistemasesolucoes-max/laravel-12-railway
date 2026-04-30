@@ -11,10 +11,11 @@ Route::post('/nfe/emitir', function (Request $request) {
         }
 
         if (!class_exists('NFePHP\NFe\Tools')) {
+            // Alterado para 200 para forçar a leitura no Base44
             return response()->json([
                 'status' => 'erro', 
                 'mensagem' => 'A biblioteca sped-nfe nao foi instalada corretamente.'
-            ], 500);
+            ], 200); 
         }
 
         $certificadoBase64 = $request->input('certificado_base64');
@@ -22,7 +23,11 @@ Route::post('/nfe/emitir', function (Request $request) {
         $xmlRecebido = $request->input('xml_nota');
 
         if (!$certificadoBase64 || !$senhaCertificado || !$xmlRecebido) {
-            return response()->json(['status' => 'erro', 'mensagem' => 'Variaveis insuficientes no JSON.'], 400);
+            // Alterado para 200 para forçar a leitura no Base44
+            return response()->json([
+                'status' => 'erro', 
+                'mensagem' => 'Variaveis insuficientes. O Base44 nao enviou o XML, a senha ou o Certificado.'
+            ], 200);
         }
 
         $configJson = json_encode([
@@ -41,9 +46,13 @@ Route::post('/nfe/emitir', function (Request $request) {
         $xmlAssinado = $tools->signNFe($xmlRecebido);
         $respostaSefaz = $tools->sefazEnviaLote([$xmlAssinado], 1);
 
-        return response()->json(['status' => 'sucesso', 'retorno' => $respostaSefaz]);
+        return response()->json(['status' => 'sucesso', 'retorno' => $respostaSefaz], 200);
 
     } catch (\Exception $e) {
-        return response()->json(['status' => 'erro', 'mensagem' => $e->getMessage()], 500);
+        // Alterado para 200 para forçar a leitura no Base44
+        return response()->json([
+            'status' => 'erro', 
+            'mensagem' => 'Erro interno: ' . $e->getMessage()
+        ], 200);
     }
 });
