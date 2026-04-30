@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-Route::post('/nfe/emitir', function (Request $request) {
+Route::any('/nfe/emitir', function (Request $request) {
     try {
         $autoload = base_path('vendor/autoload.php');
         if (file_exists($autoload)) {
